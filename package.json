@@ -8,9 +8,10 @@
   "license": "MIT",
   "author": "h4nabii <leon_xenos.xu@foxmail.com>",
   "private": true,
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node src/index.js",
+    "test-database": "node test/database/test.js"
   },
   "dependencies": {
     "mysql": "^2.18.1",

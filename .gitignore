@@ -1,2 +1,5 @@
 /node_modules
 /.idea
+
+# sensitive data
+/src/database/config.js
