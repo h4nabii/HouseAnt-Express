@@ -10,8 +10,8 @@ create table if not exists user
     id         bigint auto_increment comment '用户ID',
     username   varchar(512)                          not null comment '用户名称',
     password   varchar(512)                          not null comment '用户密码',
-    avatarUrl  varchar(1024)                         null comment '用户头像',
-    access     varchar(64) default 'user'            null comment '用户角色权限',
+    avatarUrl  varchar(1024)                         null comment '用户头像URL',
+    access     varchar(64) default 'user'            not null comment '用户角色权限',
     createTime datetime    default current_timestamp not null comment '创建时间',
     updateTime datetime    default current_timestamp not null on update current_timestamp comment '更新时间',
     constraint user_pk
