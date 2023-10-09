@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+        }
+
+        #box {
+            height: 500px;
+            width: 500px;
+            margin: auto;
+            background-color: #66ccff;
+            text-align: center;
+            line-height: 500px;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    Static Test
+</div>
+<script>
+    const box = document.querySelector("#box");
+
+    box.onclick = function (e) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:7070/user");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        }
+        xhr.withCredentials = true;
+        xhr.send("test");
+    };
+</script>
+</body>
+</html>

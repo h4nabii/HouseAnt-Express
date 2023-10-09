@@ -3,3 +3,4 @@
 
 # sensitive data
 /src/database/config.js
+/src/sessionSecret.js

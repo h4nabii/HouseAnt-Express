@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Req</title>
+</head>
+<body>
+<div id="box"></div>
+<button id="login">Login</button>
+<button id="getData">Get data</button>
+<button id="logout">Logout</button>
+</body>
+<script>
+    const loginBtn = document.querySelector("#login");
+    loginBtn.addEventListener("click", () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:7070/user/login");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+
+        xhr.send(JSON.stringify({
+            username: "456",
+            password: "456",
+        }));
+    });
+
+    const getDataBtn = document.querySelector("#getData");
+    getDataBtn.addEventListener("click", () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:7070/user/get-info");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+
+        xhr.send();
+    });
+
+    const logoutBtn = document.querySelector("#logout");
+    logoutBtn.addEventListener("click", () => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:7070/user/logout");
+        xhr.withCredentials = true;
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                console.log(xhr.responseText);
+            }
+        };
+
+        xhr.send();
+    });
+</script>
+</html>
