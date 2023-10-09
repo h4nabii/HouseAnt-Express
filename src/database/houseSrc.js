@@ -1,7 +1,7 @@
 const pool = require("./connection");
 
 /**
- * @typedef House 用户信息
+ * @typedef House 房屋信息
  * @type Object
  * @property {BigInt} id        房屋ID
  * @property {BigInt} userId    房主ID
@@ -16,7 +16,7 @@ const pool = require("./connection");
  */
 
 /**
- * @typedef HouseCreate 创建房屋所需的字段
+ * @typedef HouseRequired 必须的房屋信息
  * @type Object
  * @property {BigInt} userId    房主ID
  * @property {string} name      房屋名称
@@ -28,7 +28,7 @@ const pool = require("./connection");
  */
 
 /**
- * @typedef HouseUpdate 可以修改的房屋字段
+ * @typedef HouseEditable 可修改的房屋信息
  * @type Object
  * @property {string?} name     房屋名称
  * @property {string?} address  房屋地址
@@ -39,58 +39,143 @@ const pool = require("./connection");
  */
 
 const houseSrc = {
+    /**
+     * 获取房屋总数
+     * @return {Promise<{success: boolean, count: number}>} 房屋总数
+     */
+    getTotal: () => new Promise((resolve, reject) => {
+        const queryStr = `
+            select count(*) as count
+            from houseSrc;
+        `;
+        pool.query(queryStr, (err, [result]) => {
+            if (err) reject(err);
+            else resolve({
+                success: true,
+                count: result["count"],
+            });
+        });
+    }),
+
+    /**
+     * 获取一定数量的房屋数据
+     * @param {number} count=20 需要获取的房屋数量
+     * @param {number?} ignore 需要忽略的房屋数量
+     * @return {Promise<{success: boolean, houseList: Array<House>}>} 房屋列表
+     */
+    getList: (count = 20, ignore) => new Promise((resolve, reject) => {
+        const queryStr = `
+            select *
+            from houseSrc
+            limit ${ignore ? (ignore + ",") : ""}
+            ${count};
+        `;
+        pool.query(queryStr, (err, results) => {
+            if (err) reject(err);
+            else resolve({
+                success: true,
+                houseList: results,
+            });
+        });
+    }),
+
+    /**
+     * 获取空闲的房屋总数
+     * @return {Promise<{success: boolean, count: number}>} 房屋总数
+     */
+    getAvailableTotal: () => new Promise((resolve, reject) => {
+        const queryStr = `
+            select count(*) as count
+            from houseSrc
+            where id in (select houseId from reservation where status = 'reserved');
+        `;
+        pool.query(queryStr, (err, [result]) => {
+            if (err) reject(err);
+            else resolve({
+                success: true,
+                count: result["count"],
+            });
+        });
+    }),
+
+    /**
+     * 获取一定数量的空闲的房屋数据
+     * @param {number?} count 需要获取的房屋数量
+     * @param {number?} ignore 需要忽略的房屋数量
+     * @return {Promise<{success: boolean, houseList: Array<House>}>} 房屋列表
+     */
+    getAvailableList: (count = 20, ignore) => new Promise((resolve, reject) => {
+        const queryStr = `
+            select *
+            from houseSrc
+            where id in (select houseId from reservation where status = 'reserved')
+            limit ${ignore ? (ignore + ",") : ""}
+            ${count};
+        `;
+        pool.query(queryStr, (err, results) => {
+            if (err) reject(err);
+            else resolve({
+                success: true,
+                houseList: results,
+            });
+        });
+    }),
 
     /**
      * 根据房屋ID获取特定的房屋信息
      * @param {BigInt} houseId 房屋ID
-     * @return {Promise<{success: boolean, houseInfo: House}>} 房屋存在则 `houseInfo` 为用户信息，否则为 `undefined`
+     * @return {Promise<{success: boolean, houseInfo: House}>} 房屋存在则houseInfo为房屋信息，否则为undefined
      */
-    getInfoById(houseId) {
+    getById: (houseId) => new Promise((resolve, reject) => {
         const queryStr = `
             select *
             from houseSrc
             where id = '${houseId}';
         `;
-        return new Promise((resolve, reject) => {
-            pool.query(queryStr, (err, [result]) => {
-                if (err) reject(err);
-                else resolve({
-                    success: !!result,
-                    userInfo: result,
-                });
+        pool.query(queryStr, (err, [result]) => {
+            if (err) reject(err);
+            else resolve({
+                success: !!result,
+                houseInfo: result,
             });
         });
-    },
+    }),
 
     /**
-     *
-     * @param {number} userId
+     * 根据房主ID获取房主的所有房屋
+     * @param {BigInt} userId
      * @return {Promise<{success: boolean, houseList: Array<House>}>}
      */
-    getInfoListByOwnerId(userId) {
+    getListByOwnerId: (userId) => new Promise((resolve, reject) => {
         const queryStr = `
             select *
             from houseSrc
             where userId = '${userId}';
         `;
-        return new Promise((resolve, reject) => {
-            pool.query(queryStr, (err, results) => {
-                if (err) reject(err);
-                else resolve({
-                    success: true,
-                    houseList: results,
-                });
+        pool.query(queryStr, (err, results) => {
+            if (err) reject(err);
+            else resolve({
+                success: true,
+                houseList: results,
             });
         });
-    },
+    }),
 
     /**
      * 创建一个新的房屋
-     * @param {HouseCreate} houseInfo 房屋信息
+     * @param {HouseRequired} houseInfo 房屋信息
      * @return {Promise<{success: boolean, message: string}>} 执行结果
      */
-    create(houseInfo) {
-        const {userId, name, address, price, details, area, picture} = houseInfo;
+    create: (houseInfo) => new Promise(resolve => {
+        const {
+            userId,
+            name,
+            address,
+            price,
+            details,
+            area,
+            picture,
+        } = houseInfo;
         const queryStr = `
             insert into houseSrc(userid, name, address, price
                 ${details ? ", details" : ""} ${area ? ", area" : ""}
@@ -103,95 +188,97 @@ const houseSrc = {
                         ${area ? ",'" + area + "'" : ""}
                         ${picture ? ",'" + picture + "'" : ""});
         `;
-        console.log(queryStr);
-        return new Promise(resolve => {
-            if (!userId || !name || !address || !price) {
-                resolve({
-                    success: false,
-                    message: "Fields \"userId\", \"name\", \"address\", \"price\" cannot be \"undefined\" or \"null\"",
-                });
-                return;
-            }
-            pool.query(queryStr, err => {
-                if (err) resolve({
-                    success: false,
-                    message: "SQL error occurred: " + err.sqlMessage,
-                });
-                else resolve({
-                    success: true,
-                    message: "Create house successfully",
-                });
+        if (!userId || !name || !address || !price) {
+            resolve({
+                success: false,
+                message: "Fields \"userId\", \"name\", \"address\", \"price\" cannot be \"undefined\" or \"null\"",
+            });
+            return;
+        }
+        pool.query(queryStr, err => {
+            if (err) resolve({
+                success: false,
+                message: "SQL error occurred: " + err.sqlMessage,
+            });
+            else resolve({
+                success: true,
+                message: "Create house successfully",
             });
         });
-    },
+    }),
 
     /**
      * 根据房屋ID删除房屋
      * @param {BigInt} houseId - 房屋ID
      * @return {Promise<{success: boolean, message: string}>} - 删除结果
      */
-    delete(houseId) {
+    delete: (houseId) => new Promise((resolve, reject) => {
         const queryStr = `
             delete
             from houseSrc
             where id = ${houseId}
         `;
-        return new Promise((resolve, reject) => {
-            pool.query(queryStr, (err, results) => {
-                if (err) reject(err);
-                else {
-                    if (results.affectedRows) {
-                        resolve({
-                            success: true,
-                            message: "Delete house successfully",
-                        });
-                    } else {
-                        resolve({
-                            success: false,
-                            message: `House with id "${houseId}" is not exist`,
-                        });
-                    }
+        pool.query(queryStr, (err, results) => {
+            if (err) reject(err);
+            else {
+                if (results.affectedRows) {
+                    resolve({
+                        success: true,
+                        message: "Delete house successfully",
+                    });
+                } else {
+                    resolve({
+                        success: false,
+                        message: `House with id "${houseId}" is not exist`,
+                    });
                 }
-            });
+            }
         });
-    },
+    }),
 
     /**
-     * 根据用户 ID 更新用户信息
+     * 根据房屋ID更新房屋信息
      * @param {BigInt} houseId 房屋ID
-     * @param {HouseUpdate} newHouseInfo - 新信息
-     * @return {Promise<{success: boolean, message: string}>} - 更新结果
+     * @param {HouseEditable} newInfo 新信息
+     * @return {Promise<{success: boolean, message: string}>} 更新结果
      */
-    update(houseId, newHouseInfo) {
-        // TODO: 传入规定以外的数据依然可以修改其他数据，需要限制
-        let keys = [];
-        for (let [k, v] of Object.entries(newHouseInfo)) keys.push(`${k}='${v}'`);
+    update: (houseId, newInfo) => new Promise((resolve, reject) => {
+        const {
+            name,
+            address,
+            price,
+            details,
+            area,
+            picture,
+        } = newInfo;
+
+        const fields = [];
+        for ([k, v] of Object.entries({name, address, price, details, area, picture}))
+            if (v) fields.push(`${k}='${v}'`);
 
         let queryStr = [
-            "update houseSrc set",
-            keys.join(", "),
+            `update houseSrc set`,
+            fields.join(", "),
             `where id = ${houseId}`,
         ].join(" ");
 
-        return new Promise((resolve, reject) => {
-            pool.query(queryStr, (err, results) => {
-                if (err) reject(err);
-                else {
-                    if (results.affectedRows) {
-                        resolve({
-                            success: true,
-                            message: "Update user successfully",
-                        });
-                    } else {
-                        resolve({
-                            success: false,
-                            message: `User with id "${houseId}" is not exist`,
-                        });
-                    }
+        pool.query(queryStr, (err, results) => {
+            if (err) reject(err);
+            else {
+                if (results.affectedRows) {
+                    resolve({
+                        success: true,
+                        message: "Update house successfully",
+                    });
+                } else {
+                    resolve({
+                        success: false,
+                        message: `House with id "${houseId}" is not exist`,
+                    });
                 }
-            });
+            }
         });
-    },
+    }),
 };
 
 module.exports = houseSrc;
