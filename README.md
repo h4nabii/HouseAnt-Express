@@ -37,7 +37,6 @@ module.exports = {
 
 `/src/sessionSecret.js`：
 ```javascript
-/** @type string */
 module.exports = "密钥";
 ```
 

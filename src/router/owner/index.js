@@ -1,36 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const database = require("../database");
-const validator = require("../assets/validator");
+const database = require("../../database");
+const validator = require("../../assets/validator");
 
-router.use((req, res, next) => {
-    console.log(req.method, "/houseSrc" + req.url);
-    next();
-});
-
-router.get("/get-list", async (req, res) => {
-    const {count, page} = req.query;
-    if (!validator.isPositiveInteger(count, page)) {
-        res.status(400).json({
-            success: false,
-            msg: "Empty count or page are not allowed",
-        });
-        return;
-    }
-
-    const {success, houseList} = await database.houseSrc.getList(count, (page - 1) * count);
-    if (success) {
-
-    }
-
-    res.json({
-        success,
-        houseList,
-        msg: "Get house list successfully",
-    });
-});
-
-router.post("/create-house", async (req, res) => {
+router.post("/create", async function createHouse(req, res) {
     const {username} = req.session;
     if (!username) {
         res.status(400).json({
@@ -80,6 +53,27 @@ router.post("/create-house", async (req, res) => {
     res.json({
         success,
         msg: message,
+    });
+});
+
+// TODO 房主更新自己的房屋信息
+router.post("/update-house", function updateHouse(req, res) {
+
+});
+
+// TODO 房主删除自己的房屋
+router.post("/delete-house", function deleteHouse(req, res) {
+    res.json({
+        success: false,
+        msg: "Not Supported",
+    });
+});
+
+// TODO 房主获取自己所有的房屋信息
+router.get("get-house-list", function getHouseList(req, res) {
+    res.json({
+        success: false,
+        msg: "Not Supported",
     });
 });
 

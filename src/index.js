@@ -5,8 +5,10 @@ const session = require("express-session");
 const cors = require("cors");
 
 // Routers
-const userRouter = require("./user");
-const houseRouter = require("./houseSrc");
+const userRouter = require("./router/user");
+const ownerRouter = require("./router/owner");
+const customerRouter = require("./router/customer");
+const adminRouter = require("./router/admin");
 
 // Data
 const secret = require("./sessionSecret");
@@ -22,18 +24,20 @@ app.use(cors({
 app.use(session({
     secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         maxAge: 30 * 60 * 1000,
-        httpOnly: false,
     },
     name: "server",
+    rolling: true,
 }));
 app.use(express.json());
 
 app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/admin", adminRouter);
 app.use("/user", userRouter);
-app.use("/house-source", houseRouter);
+app.use("/owner", ownerRouter);
+app.use("/customer", customerRouter);
 
 app.get("/", (req, res) => {
     let resTxt;
@@ -41,6 +45,17 @@ app.get("/", (req, res) => {
         query: req.query, body: req.body, cookie: req.cookies,
     }));
     res.send(resTxt);
+});
+
+app.get("/jsonp", function jsonp(req, res) {
+    const callbackName = req.query["callback"] || "callback";
+    const serverData = "Server data";
+    res.send(`
+    if (typeof ${callbackName} === "function") ${callbackName}(${JSON.stringify({
+        data: serverData,
+    })});
+    else console.log("Server: callback not exist");
+    `);
 });
 
 app.listen(port, () => {
