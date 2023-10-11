@@ -1,10 +1,11 @@
 const pool = require("./connection");
+const user = require("./user");
 
 /**
  * @typedef House 房屋信息
  * @type Object
  * @property {BigInt} id        房屋ID
- * @property {BigInt} userId    房主ID
+ * @property {string} hostName  房主名称
  * @property {string} name      房屋名称
  * @property {string} address   房屋地址
  * @property {number} price     房屋价格
@@ -18,7 +19,7 @@ const pool = require("./connection");
 /**
  * @typedef HouseRequired 必须的房屋信息
  * @type Object
- * @property {BigInt} userId    房主ID
+ * @property {string} hostName  房主名称
  * @property {string} name      房屋名称
  * @property {string} address   房屋地址
  * @property {number} price     房屋价格
@@ -65,7 +66,18 @@ const houseSrc = {
      */
     getList: (count = 20, ignore) => new Promise((resolve, reject) => {
         const queryStr = `
-            select *
+            select id,
+                   (select username
+                    from user
+                    where userId = id) as hostName,
+                   name,
+                   address,
+                   price,
+                   details,
+                   area,
+                   picture,
+                   createTime,
+                   updateTime
             from houseSrc
             limit ${ignore ? (ignore + ",") : ""}
             ${count};
@@ -106,7 +118,18 @@ const houseSrc = {
      */
     getAvailableList: (count = 20, ignore) => new Promise((resolve, reject) => {
         const queryStr = `
-            select *
+            select id,
+                   (select username
+                    from user
+                    where userId = id) as hostName,
+                   name,
+                   address,
+                   price,
+                   details,
+                   area,
+                   picture,
+                   createTime,
+                   updateTime
             from houseSrc
             where id in (select houseId from reservation where status = 'reserved')
             limit ${ignore ? (ignore + ",") : ""}
@@ -128,7 +151,18 @@ const houseSrc = {
      */
     getById: (houseId) => new Promise((resolve, reject) => {
         const queryStr = `
-            select *
+            select id,
+                   (select username
+                    from user
+                    where userId = id) as hostName,
+                   name,
+                   address,
+                   price,
+                   details,
+                   area,
+                   picture,
+                   createTime,
+                   updateTime
             from houseSrc
             where id = '${houseId}';
         `;
@@ -148,7 +182,18 @@ const houseSrc = {
      */
     getListByOwnerId: (userId) => new Promise((resolve, reject) => {
         const queryStr = `
-            select *
+            select id,
+                   (select username
+                    from user
+                    where userId = id) as username,
+                   name,
+                   address,
+                   price,
+                   details,
+                   area,
+                   picture,
+                   createTime,
+                   updateTime
             from houseSrc
             where userId = '${userId}';
         `;
@@ -166,9 +211,9 @@ const houseSrc = {
      * @param {HouseRequired} houseInfo 房屋信息
      * @return {Promise<{success: boolean, message: string}>} 执行结果
      */
-    create: (houseInfo) => new Promise(resolve => {
+    create: (houseInfo) => new Promise(async resolve => {
         const {
-            userId,
+            hostName,
             name,
             address,
             price,
@@ -176,6 +221,16 @@ const houseSrc = {
             area,
             picture,
         } = houseInfo;
+
+        const {success, userInfo: {id: userId}} = await user.getByName(hostName);
+        if (!success) {
+            resolve({
+                success: false,
+                message: "User not exist",
+            });
+            return;
+        }
+
         const queryStr = `
             insert into houseSrc(userid, name, address, price
                 ${details ? ", details" : ""} ${area ? ", area" : ""}

@@ -100,12 +100,16 @@ const user = {
             return;
         }
 
-        const userInfo = await user.getByName(username);
-        if (userInfo !== undefined) {
-            resolve({
-                success: false,
-                message: "Username already existed",
-            });
+        try {
+            const {success} = await user.getByName(username);
+            if (success) {
+                resolve({
+                    success: false,
+                    message: "Username already existed",
+                });
+            }
+        } catch (err) {
+            reject(err);
         }
 
         const queryStr = `

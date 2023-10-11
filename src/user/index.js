@@ -10,7 +10,7 @@ router.use((req, res, next) => {
 router.get("/get-info", (req, res) => {
     const {username, access} = req.session;
     res.json({
-        username: username, access: access || "Not Logged",
+        username: username, access: access || "Not logged",
     });
 });
 
@@ -19,16 +19,15 @@ router.post("/login", async (req, res) => {
     let info, err;
     if (username) {
         ({userInfo: info} = await database.user.getByName(username));
-        console.log(info);
         if (info) {
             if (info.password !== password) {
-                err = "Wrong Password";
+                err = "Wrong password";
             }
         } else {
-            err = "User Not Exist";
+            err = "User not exist";
         }
     } else {
-        err = "Empty Username";
+        err = "Empty username";
     }
 
     if (err) {
@@ -40,7 +39,7 @@ router.post("/login", async (req, res) => {
         req.session.username = info.username;
         req.session.access = "user";
         res.json({
-            msg: "Login Succeed",
+            msg: "Login succeed",
             success: true,
         });
     }
@@ -50,23 +49,21 @@ router.get("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) console.error(err);
     });
-    res.end("Logout Succeed");
+    res.end("Logout succeed");
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
     const {username, password} = req.body;
-    database.user.create(username, password)
-        .then(() => {
-            res.send("success");
-        })
-        .catch(() => {
-            res.send("failed");
-        });
+    const {success, message} = await database.user.create(username, password);
+    res.json({
+        success,
+        msg: message,
+    });
 });
 
 router.get("/jsonp", (req, res) => {
     const callbackName = req.query["callback"] || "callback";
-    const serverData = "Server Data";
+    const serverData = "Server data";
     res.send(`
     if (typeof ${callbackName} === "function") ${callbackName}(${JSON.stringify({
         data: serverData,
