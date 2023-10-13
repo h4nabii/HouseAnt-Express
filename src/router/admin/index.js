@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const database = require("../../database");
+const database = require("../../assets/database");
 
 // TODO 管理员获取用户列表
 router.get("/get-explore-list", function getList(req, res) {

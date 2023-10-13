@@ -1,12 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const database = require("../../database");
-const validator = require("../../assets/validator");
-
-router.use(function user(req, res, next) {
-    console.log(req.method, "/user" + req.url);
-    next();
-});
+const database = require("../../assets/database");
+const validator = require("../../assets/js/validator");
 
 /**
  * 响应当前登录用户的用户信息

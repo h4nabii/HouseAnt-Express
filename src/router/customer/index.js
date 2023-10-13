@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const database = require("../../database");
+const database = require("../../assets/database");
 
 // TODO 顾客获取自己的所有预约信息
 router.get("get-reservation-list", function getReservationList(req, res) {

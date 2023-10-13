@@ -1,6 +1,6 @@
 (async () => {
     console.log("--- 数据库测试 ---");
-    const database = require("../../src/database");
+    const database = require("../../src/assets/database");
 
     const userTest = async () => {
         console.log(">>> 用户表测试");

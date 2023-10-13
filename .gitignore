@@ -2,5 +2,5 @@
 /.idea
 
 # sensitive data
-/src/database/config.js
-/src/sessionSecret.js
+/src/assets/database/config.js
+/src/assets/data/sessionSecret.js

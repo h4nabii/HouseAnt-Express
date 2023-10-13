@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const database = require("../../database");
-const validator = require("../../assets/validator");
+const database = require("../../assets/database");
+const validator = require("../../assets/js/validator");
 
-router.post("/create", async function createHouse(req, res) {
+router.post("/add-house", async function addHouse(req, res) {
     const {username} = req.session;
     if (!username) {
         res.status(400).json({
@@ -62,7 +62,7 @@ router.post("/update-house", function updateHouse(req, res) {
 });
 
 // TODO 房主删除自己的房屋
-router.post("/delete-house", function deleteHouse(req, res) {
+router.post("/remove-house", function removeHouse(req, res) {
     res.json({
         success: false,
         msg: "Not Supported",
@@ -70,7 +70,7 @@ router.post("/delete-house", function deleteHouse(req, res) {
 });
 
 // TODO 房主获取自己所有的房屋信息
-router.get("get-house-list", function getHouseList(req, res) {
+router.get("/get-house-list", function getHouseList(req, res) {
     res.json({
         success: false,
         msg: "Not Supported",
