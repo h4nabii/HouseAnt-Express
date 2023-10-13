@@ -11,7 +11,7 @@ router.get("/get-explore-list", function getList(req, res) {
 });
 
 // TODO 管理员封禁特定账户
-router.post("/ban", function ban(req, res) {
+router.post("/banUser", function banUser(req, res) {
     res.json({
         success: false,
         msg: "Not Supported",

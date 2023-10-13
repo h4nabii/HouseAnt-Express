@@ -8,6 +8,10 @@ router.use(function user(req, res, next) {
     next();
 });
 
+/**
+ * 响应当前登录用户的用户信息
+ * 要求credentials
+ */
 router.get("/get-info", function getInfo(req, res) {
     const {username, access} = req.session;
     res.json({
@@ -15,6 +19,10 @@ router.get("/get-info", function getInfo(req, res) {
     });
 });
 
+/**
+ * 处理用户登录请求
+ * 设置cookie记录session标识符
+ */
 router.post("/login", async function login(req, res) {
     const {username, password} = req.body;
     let info, err;
@@ -45,6 +53,10 @@ router.post("/login", async function login(req, res) {
     }
 });
 
+/**
+ * 处理用户注销请求
+ * 删除记录了session标识符的cookie
+ */
 router.get("/logout", function logout(req, res) {
     req.session.destroy((err) => {
         if (err) console.error(err);
@@ -55,6 +67,10 @@ router.get("/logout", function logout(req, res) {
     });
 });
 
+/**
+ * 注册新用户
+ * 要求请求体包含username和password
+ */
 router.post("/register", async function register(req, res) {
     const {username, password} = req.body;
     const {success, message} = await database.user.create(username, password);

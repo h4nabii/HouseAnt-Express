@@ -120,15 +120,14 @@ const reservation = {
      * @param {ReservationRequired} reservationInfo 预约信息
      * @return {Promise<{success: boolean, message: string}>} 创建结果
      */
-    create: (reservationInfo) => new Promise(resolve => {
-        const {
-            userId,
-            houseId,
-            startDate,
-            endDate,
-            status,
-            details,
-        } = reservationInfo;
+    create: ({
+        userId,
+        houseId,
+        startDate,
+        endDate,
+        status,
+        details,
+    }) => new Promise(resolve => {
         const queryStr = `
             insert into reservation(userid, houseId, startDate, endDate, status
                 ${details ? ", details" : ""})
@@ -193,13 +192,12 @@ const reservation = {
      * @param {ReservationEditable} newInfo 更新信息
      * @return {Promise<{success: boolean, message: string}>} 更新结果
      */
-    update: (id, newInfo) => new Promise((resolve, reject) => {
-        const {
-            startDate,
-            endDate,
-            status,
-            details,
-        } = newInfo;
+    update: (id, {
+        startDate,
+        endDate,
+        status,
+        details,
+    }) => new Promise((resolve, reject) => {
 
         const fields = [];
         for ([k, v] of Object.entries({startDate, endDate, status, details}))

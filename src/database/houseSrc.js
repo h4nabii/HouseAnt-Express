@@ -211,16 +211,15 @@ const houseSrc = {
      * @param {HouseRequired} houseInfo 房屋信息
      * @return {Promise<{success: boolean, message: string}>} 执行结果
      */
-    create: (houseInfo) => new Promise(async resolve => {
-        const {
-            hostName,
-            name,
-            address,
-            price,
-            details,
-            area,
-            picture,
-        } = houseInfo;
+    create: ({
+        hostName,
+        name,
+        address,
+        price,
+        details,
+        area,
+        picture,
+    }) => new Promise(async resolve => {
 
         const {success, userInfo: {id: userId}} = await user.getByName(hostName);
         if (!success) {
@@ -297,15 +296,14 @@ const houseSrc = {
      * @param {HouseEditable} newInfo 新信息
      * @return {Promise<{success: boolean, message: string}>} 更新结果
      */
-    update: (houseId, newInfo) => new Promise((resolve, reject) => {
-        const {
-            name,
-            address,
-            price,
-            details,
-            area,
-            picture,
-        } = newInfo;
+    update: (houseId, {
+        name,
+        address,
+        price,
+        details,
+        area,
+        picture,
+    }) => new Promise((resolve, reject) => {
 
         const fields = [];
         for ([k, v] of Object.entries({name, address, price, details, area, picture}))

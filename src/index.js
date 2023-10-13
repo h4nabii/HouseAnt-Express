@@ -24,8 +24,9 @@ app.use(cors({
 app.use(session({
     secret,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: {
+        domain: "hyhyzz.top",
         maxAge: 30 * 60 * 1000,
     },
     name: "server",
@@ -38,6 +39,11 @@ app.use("/admin", adminRouter);
 app.use("/user", userRouter);
 app.use("/owner", ownerRouter);
 app.use("/customer", customerRouter);
+
+app.use((req, res, next) => {
+    console.log(`req from ${req.ip}, ${new Date()}`);
+    next();
+});
 
 app.get("/", (req, res) => {
     let resTxt;
@@ -59,5 +65,6 @@ app.get("/jsonp", function jsonp(req, res) {
 });
 
 app.listen(port, () => {
+    console.log(`last update 23.10.13`);
     console.log(`now listening on http://localhost:${port}`);
 });

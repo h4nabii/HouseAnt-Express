@@ -160,13 +160,12 @@ const user = {
      * @param {UserEditable} newInfo 新的用户信息
      * @return {Promise<{success: boolean, message: string}>} 更新结果
      */
-    update: (userId, newInfo) => new Promise((resolve, reject) => {
-        const {
-            username,
-            password,
-            avatarUrl,
-            access,
-        } = newInfo;
+    update: (userId, {
+        username,
+        password,
+        avatarUrl,
+        access,
+    }) => new Promise((resolve, reject) => {
 
         const fields = [];
         for ([k, v] of Object.entries({username, password, avatarUrl, access}))
