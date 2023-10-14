@@ -2,4 +2,5 @@
 module.exports = {
     origin: true,
     credentials: true,
+    methods: ["GET", "POST"],
 };

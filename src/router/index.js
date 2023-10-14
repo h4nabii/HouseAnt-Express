@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 router.get("/", (req, res) => {
-    res.redirect("/public/test.html");
+    if (process.env.HOUSEANT_MODE === "production")
+        res.redirect("/house-ant/public/test.html");
+    else {
+        res.redirect("/public/test.html")
+    }
 });
 
 router.get("/jsonp", function jsonp(req, res) {

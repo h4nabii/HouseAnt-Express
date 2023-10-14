@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 // Libraries
 const path = require("node:path");
 const express = require("express");
@@ -9,14 +11,14 @@ const userRouter = require("./router/user");
 const ownerRouter = require("./router/owner");
 const customerRouter = require("./router/customer");
 const adminRouter = require("./router/admin");
-const indexRouter = require("./router/index");
+const indexRouter = require("./router");
 
 // Configurations
 const corsConfig = require("./assets/data/corsConfig");
 const sessionConfig = require("./assets/data/sessionConfig");
 
 const app = express();
-const port = 7070;
+const port = process.env.SERVER_PORT;
 
 app.use(cors(corsConfig));
 app.use(session(sessionConfig));
@@ -25,8 +27,8 @@ app.use(express.json());
 app.use((req, res, next) => {
     // Catch request IP and time
     const time = new Date();
-    const ip = req.ip.split(":").map(i => i.padStart(3, " ")).join(":");
-    console.log(`>>> [${time.toLocaleString()}] Request from ${ip}  ---  ${req.method} ${req.url}`);
+    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "unknown").padStart(15, " ");
+    console.log(`>>> [${time.toLocaleString()}] Request from ${ip} --- ${req.method} ${req.url}`);
     next();
 });
 
@@ -39,5 +41,10 @@ app.use("/customer", customerRouter);
 
 app.listen(port, () => {
     console.log(`last update 23.10.14`);
-    console.log(`now listening on http://localhost:${port}`);
+    if (process.env.HOUSEANT_MODE === "production") {
+        console.log(`Product port on : https://h4nabii.hyhyzz.top/house-ant/`);
+        console.log(`Front end on    : https://blog.hyhyzz.top/houseant-front/`);
+    } else {
+        console.log(`Develop port on : http://localhost:${port}/`);
+    }
 });

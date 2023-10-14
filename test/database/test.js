@@ -91,8 +91,9 @@
         console.log(await database.reservation.delete(reservationList[0].id));
     };
 
-    // await userTest();
+    await userTest();
     // await houseTest();
-    await reservationTest();
+    // await reservationTest();
+
     database.close();
 })();

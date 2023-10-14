@@ -1,25 +1,5 @@
 const pool = require("./connection");
-
-/**
- * @typedef User 用户信息
- * @type Object
- * @property {BigInt} id            用户ID
- * @property {string} username      用户名称
- * @property {string} password      用户密码
- * @property {string?} avatarUrl    用户头像URL
- * @property {string} access        用户权限
- * @property {Date} createTime      创建时间
- * @property {Date} updateTime      更新时间
- */
-
-/**
- * @typedef UserEditable 可修改的用户信息
- * @type Object
- * @property {string?} username      用户名称
- * @property {string?} password      用户密码
- * @property {string?} avatarUrl    用户头像URL
- * @property {string?} access        用户权限
- */
+const User = require("../entity/User");
 
 const user = {
 
@@ -51,14 +31,13 @@ const user = {
         const queryStr = `
             select *
             from user
-            limit ${ignore ? (ignore + ",") : ""}
-            ${count};
+            limit ${ignore || 0}, ${count};
         `;
         pool.query(queryStr, (err, results) => {
             if (err) reject(err);
             else resolve({
                 success: true,
-                userList: results,
+                userList: results.map(item => new User(item)),
             });
         });
     }),
@@ -79,7 +58,7 @@ const user = {
                 if (err) reject(err);
                 else resolve({
                     success: !!result,
-                    userInfo: result,
+                    userInfo: result && new User(result),
                 });
             });
         });
@@ -157,7 +136,7 @@ const user = {
     /**
      * 根据用户 ID 更新用户信息
      * @param {BigInt} userId 用户ID
-     * @param {UserEditable} newInfo 新的用户信息
+     * @param {User} newInfo 新的用户信息
      * @return {Promise<{success: boolean, message: string}>} 更新结果
      */
     update: (userId, {

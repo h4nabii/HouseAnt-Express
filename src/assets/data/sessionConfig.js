@@ -2,10 +2,11 @@ const secret = require("./sessionSecret");
 module.exports = {
     secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-        domain: "hyhyzz.top",
+        domain: process.env.COOKIE_DOMAIN,
         maxAge: 30 * 60 * 1000,
+        httpOnly: true,
     },
     name: "server",
     rolling: true,
