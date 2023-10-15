@@ -27,7 +27,7 @@ app.use(express.json());
 app.use((req, res, next) => {
     // Catch request IP and time
     const time = new Date();
-    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "unknown").padStart(15, " ");
+    const ip = (req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || req.hostname || "unknown").padStart(15, " ");
     console.log(`>>> [${time.toLocaleString()}] Request from ${ip} --- ${req.method} ${req.url}`);
     next();
 });

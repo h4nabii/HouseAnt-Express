@@ -38,14 +38,15 @@ router.post("/login", async function login(req, res) {
 
     if (err) {
         res.json({
-            error: err, success: false,
+            success: false,
+            msg: err,
         });
     } else {
         req.session.username = info.username;
         req.session.access = "user";
         res.json({
-            msg: "Login succeed",
             success: true,
+            msg: "Login succeed",
         });
     }
 });
