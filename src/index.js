@@ -43,7 +43,7 @@ app.listen(port, () => {
     console.log(`last update 23.10.14`);
     if (process.env.HOUSEANT_MODE === "production") {
         console.log(`Product port on : https://h4nabii.hyhyzz.top/house-ant/`);
-        console.log(`Front end on    : https://blog.hyhyzz.top/houseant-front/`);
+        console.log(`Front end on    : https://blog.hyhyzz.top/HouseAnt-Vue3/`);
     } else {
         console.log(`Develop port on : http://localhost:${port}/`);
     }

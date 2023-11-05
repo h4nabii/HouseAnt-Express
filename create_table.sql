@@ -21,7 +21,7 @@ create table if not exists user
 ) comment '用户表' collate = utf8mb3_unicode_ci;
 
 -- 房屋表
-create table if not exists houseSrc
+create table if not exists house_src
 (
     id         bigint auto_increment comment '房屋ID',
     userId     bigint                             not null comment '房主ID',
@@ -33,9 +33,9 @@ create table if not exists houseSrc
     picture    varchar(1024)                      null comment '房屋图片',
     createTime datetime default current_timestamp not null comment '创建时间',
     updateTime datetime default current_timestamp not null on update current_timestamp comment '更新时间',
-    constraint houseSrc_pk
+    constraint house_src_pk
         primary key (id),
-    constraint houseSrc_user_id_fk
+    constraint house_src_user_id_fk
         foreign key (userId) references user (id)
 ) comment '房屋表' collate = utf8mb3_unicode_ci;
 
@@ -52,8 +52,8 @@ create table if not exists reservation
     details    text                               null comment '预约细节',
     createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    constraint reservation_houseSrc_id_fk
-        foreign key (houseId) references houseSrc (id),
+    constraint reservation_house_src_id_fk
+        foreign key (houseId) references house_src (id),
     constraint reservation_user_id_fk
         foreign key (userId) references user (id)
 ) comment '预约表' collate = utf8mb3_unicode_ci;

@@ -47,7 +47,7 @@ const houseSrc = {
     getTotal: () => new Promise((resolve, reject) => {
         const queryStr = `
             select count(*) as count
-            from houseSrc;
+            from house_src;
         `;
         pool.query(queryStr, (err, [result]) => {
             if (err) reject(err);
@@ -78,7 +78,7 @@ const houseSrc = {
                    picture,
                    createTime,
                    updateTime
-            from houseSrc
+            from house_src
             limit ${ignore ? (ignore + ",") : ""}
             ${count};
         `;
@@ -98,7 +98,7 @@ const houseSrc = {
     getAvailableTotal: () => new Promise((resolve, reject) => {
         const queryStr = `
             select count(*) as count
-            from houseSrc
+            from house_src
             where id in (select houseId from reservation where status = 'reserved');
         `;
         pool.query(queryStr, (err, [result]) => {
@@ -130,7 +130,7 @@ const houseSrc = {
                    picture,
                    createTime,
                    updateTime
-            from houseSrc
+            from house_src
             where id in (select houseId from reservation where status = 'reserved')
             limit ${ignore ? (ignore + ",") : ""}
             ${count};
@@ -163,7 +163,7 @@ const houseSrc = {
                    picture,
                    createTime,
                    updateTime
-            from houseSrc
+            from house_src
             where id = '${houseId}';
         `;
         pool.query(queryStr, (err, [result]) => {
@@ -194,7 +194,7 @@ const houseSrc = {
                    picture,
                    createTime,
                    updateTime
-            from houseSrc
+            from house_src
             where userId = '${userId}';
         `;
         pool.query(queryStr, (err, results) => {
@@ -231,7 +231,7 @@ const houseSrc = {
         }
 
         const queryStr = `
-            insert into houseSrc(userid, name, address, price
+            insert into house_src(userid, name, address, price
                 ${details ? ", details" : ""} ${area ? ", area" : ""}
                 ${picture ? ", picture" : ""})
             values (${userId},
@@ -269,7 +269,7 @@ const houseSrc = {
     delete: (houseId) => new Promise((resolve, reject) => {
         const queryStr = `
             delete
-            from houseSrc
+            from house_src
             where id = ${houseId}
         `;
         pool.query(queryStr, (err, results) => {
