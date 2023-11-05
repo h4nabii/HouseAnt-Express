@@ -1,18 +1,12 @@
 ## HouseAnt - Express
 
-![Static Badge](https://img.shields.io/badge/status-developing-red)
+![](https://img.shields.io/badge/Deployed_OS-Ubuntu_22.04.3_LTS-blue)
+![](https://img.shields.io/badge/Developing-red)
 
-使用 Express 编写的网页后端
+![](https://img.shields.io/badge/Database-MySQL_8.0.35-blue)
+![](https://img.shields.io/badge/Server-Express_4.18.2-blue)
 
-### 项目依赖
-
-| Package         | 功能             |
-|-----------------|----------------|
-| mysql           | 数据库连接          |
-| express         | 服务器            |
-| express-session | 实现浏览器Session登录 |
-| cors            | 实现跨域资源共享       |
-
+模拟租房网站 HouseAnt 的后端服务器代码，使用 Express 框架
 
 ### 项目初始化
 
